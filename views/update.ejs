@@ -1,0 +1,7 @@
+<form action="/ravintolat/<%= ravintolat._id%>" method="POST">
+    <input type="text" name="nimi" placeholder="Ravintolan Nimi" value="<%= ravintolat.nimi%>">
+    <input type="text" name="osoite" placeholder="Ravintolan Osoite" value="<%= ravintolat.osoite%>">
+    <input type="text" name="kaupunki" placeholder="Kaupunki" value="<%= ravintolat.kaupunki%>">
+    <input type="text" name="puh" placeholder="Puhelinnumero" value="<%= ravintolat.puh%>">
+    <button class="button large" type="submit">Päivitä</button>
+  </form>

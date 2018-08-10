@@ -1,0 +1,302 @@
+<!doctype html>
+<html class="no-js" lang="en" dir="ltr">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Burger Lovers Finland></title>
+  <link rel="stylesheet" href="/stylesheets/foundation.css">
+  <link rel="stylesheet" href="/stylesheets/app.css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Oswald:400,700" rel="stylesheet">
+  <script src="https://api.mqcdn.com/sdk/mapquest-js/v1.3.2/mapquest.js"></script>
+  <link type="text/css" rel="stylesheet" href="https://api.mqcdn.com/sdk/mapquest-js/v1.3.2/mapquest.css" />
+</head>
+
+<body>
+
+  <!-- Navigaatio -->
+
+  <div class="hero-full-screen">
+    <div class="top-content-section">
+      <div class="top-bar">
+        <div class="top-bar-left">
+          <ul class="menu">
+            <li>
+              <a href="#">Etusivu</a>
+            </li>
+            <li>
+              <a href="#main-content-section">Ravintolat</a>
+            </li>
+            <li>
+              <a href="#" data-open="exampleModal1">Lisää Ravintola</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sivuston otsikko sekä hakupalkki -->
+
+    <div class="middle-content-section">
+      <h1>Burger Lovers Finland</h1>
+      <form action="/ravintolat/etsi" method="POST">
+        <input type="text" name="haku" placeholder="Etsi ravintolaa...">
+        <button class="button large" type="submit">Etsi</button>
+      </form>
+    </div>
+
+    <div class="bottom-content-section" data-magellan data-threshold="0">
+      <a href="#main-content-section">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+          <path d="M24 12c0-6.627-5.373-12-12-12s-12 5.373-12 12 5.373 12 12 12 12-5.373 12-12zm-18.005-1.568l1.415-1.414 4.59 4.574 4.579-4.574 1.416 1.414-5.995 5.988-6.005-5.988z"
+          />
+        </svg>
+      </a>
+    </div>
+  </div>
+
+  <!-- Sisältö -->
+
+  <div id="main-content-section" data-magellan-target="main-content-section">
+    <div class="row">
+      <div id="map"></div>
+    </div>
+    <div class="row">
+      <div class="row text-center" id="top-title">
+        <h4>Ravintolat</h4>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Ravintolan nimi</th>
+            <th>Ravintolan osoite</th>
+            <th width="300">Kaupunki</th>
+            <th width="150">Puh</th>
+            <th width="150" style="text-align: center;">Arvosana</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+
+          <% ravintola.forEach(function(ravintolat){ %>
+
+
+            <tr>
+              <td>
+                <%= ravintolat.nimi%>
+              </td>
+              <td>
+                <%= ravintolat.osoite%>
+              </td>
+              <td>
+                <%= ravintolat.kaupunki%>
+              </td>
+              <td>
+                <%= ravintolat.puh%>
+              </td>
+              <% if(ravintolat.arvosana < 1.5){ %>
+                <td style="text-align: center;">
+                  <span class="badge alert">
+                    <%= ravintolat.arvosana%>
+                  </span>
+                </td>
+                <% } else if (ravintolat.arvosana > 1.5 && ravintolat.arvosana <= 3) { %>
+                  <td style="text-align: center;">
+                    <span class="badge warning">
+                      <%= ravintolat.arvosana%>
+                    </span>
+                  </td>
+                  <% } else { %>
+                    <td style="text-align: center;">
+                      <span class="badge success">
+                        <%= ravintolat.arvosana%>
+                      </span>
+                    </td>
+                    <% } %>
+                      <td style="text-align: center;">
+                        <a href="#" data-open="<%= ravintolat._id%>">
+                          <button class="button small" style="margin-bottom: 0;">Tiedot</button>
+                        </a>
+                      </td>
+            </tr>
+
+            <!-- Ladataan kartta -->
+
+            <script>
+
+              var osoite = "<%= ravintolat.osoite%>, <%= ravintolat.kaupunki%>";
+
+              window.onload = function () {
+                L.mapquest.key = 'Md5N8Lp0Yr2HZ4J1BxWZW0ugrgTdnOP1';
+
+                var map = L.mapquest.map('map', {
+                  center: [0, 0],
+                  layers: L.mapquest.tileLayer('map'),
+                  zoom: 14
+                });
+
+                L.mapquest.geocoding().geocode(osoite);
+                map.addControl(L.mapquest.locatorControl());
+
+
+              }
+
+            </script>
+
+            <!-- Avaa ravintolan tiedot sekä kommentit uuteen modaliin -->
+
+            <div class="reveal" id="<%= ravintolat._id%>" data-reveal>
+              <h1>
+                <%= ravintolat.nimi%>
+              </h1>
+              <p class="lead">
+                <%= ravintolat.osoite%>,
+                  <%= ravintolat.kaupunki%>
+              </p>
+              <p>Puhelin:
+                <%= ravintolat.puh%>
+              </p>
+              <% if(ravintolat.arvosana < 1.5){ %>
+                <p>Ravintola arvosana:
+                  <span class="badge alert">
+                    <%= ravintolat.arvosana%>
+                  </span>
+                </p>
+                <% } else if (ravintolat.arvosana > 1.5 && ravintolat.arvosana <= 3) { %>
+                  <p>Ravintola arvosana:
+                    <span class="badge warning">
+                      <%= ravintolat.arvosana%>
+                    </span>
+                  </p>
+                  <% } else { %>
+                    <p>Ravintola arvosana:
+                      <span class="badge success">
+                        <%= ravintolat.arvosana%>
+                      </span>
+                    </p>
+                    <% } %>
+                      <br>
+                      <div class="button-group">
+                        <form action="/ravintolat/<%= ravintolat.id %>/edit" method="GET">
+                      <button class="button small">Muokkaa</button>
+                       </form>
+                        <form action="/ravintolat/<%= ravintolat._id%>/poista" method="POST">
+                          <button class="button small alert" type="submit">Poista ravintola</button>
+                        </form>
+                      </div>
+
+                      <!-- Avaa Modalin sisälle toisen Modalin josta muokataan ravintolan tietoja -->
+
+                      <!-- Haetaan kaikki ravintolan kommentit -->
+
+                      <h4>Kommentit</h4>
+                      <% for(var i = 0; i < ravintolat.kommentit.length; i++) { %>
+
+                        <div class="callout primary">
+                          <h5>
+                            <%= ravintolat.kommentit[i].otsikko%>
+                          </h5>
+                          <% if(ravintolat.kommentit[i].arvosana < 1.5){ %>
+                            <p>Arvosana:
+                              <span class="badge alert">
+                                <%= ravintolat.kommentit[i].arvosana%>
+                              </span>
+                            </p>
+                            <% } else if (ravintolat.kommentit[i].arvosana > 1.5 && ravintolat.kommentit[i].arvosana <= 3) { %>
+                              <p>Arvosana:
+                                <span class="badge warning">
+                                  <%= ravintolat.kommentit[i].arvosana%>
+                                </span>
+                              </p>
+                              <% } else { %>
+                                <p>Arvosana:
+                                  <span class="badge success">
+                                    <%= ravintolat.kommentit[i].arvosana%>
+                                  </span>
+                                </p>
+                                <% } %>
+                                  Arvio:
+                                  <blockquote>
+                                    <%= ravintolat.kommentit[i].arvio%>
+                                  </blockquote>
+                                  Lähettäjä:
+                                  <cite>
+                                    <%= ravintolat.kommentit[i].lahettaja%>
+                                  </cite>
+                                  <form action="/ravintolat/<%= ravintolat._id%>/kommentit/<%= ravintolat.kommentit[i]._id%>" method="POST">
+                                    <br>
+                                    <button class="button alert tiny">Poista</button>
+                                  </form>
+                                  <div class="callout secondary">
+                                      <form action="/ravintolat/<%= ravintolat._id%>/kommentit/<%= ravintolat.kommentit[i]._id %>/reply" method="GET">
+                                        <button class="button small">Muokkaa</button>
+                                         </form>
+                                <p><%= ravintolat.kommentit[i].ravintolanvastaus %></p>
+                                <form action="/ravintolat/<%= ravintolat._id%>/kommentit/<%= ravintolat.kommentit[i]._id %>/reply" method="POST">
+                                  <input type="text" name="id" placeholder="Otsikko" value="<%= ravintolat.kommentit[i]._id%>">
+                                  <input type="hidden" name="otsikko" placeholder="Otsikko" value="<%= ravintolat.kommentit[i].otsikko%>">
+                                  <input type="hidden" name="arvosana" placeholder="Arvosana 1-5" value="<%= ravintolat.kommentit[i].arvosana%>">
+                                  <input type="hidden" name="arvio" placeholder="Kirjoita lyhyt arvio käynnistäsi" value="<%= ravintolat.kommentit[i].arvio%>">
+                                  <input type="hidden" name="lahettaja" placeholder="Nimimerkki" value="<%= ravintolat.kommentit[i].lahettaja%>">
+                                  <input type="text" name="ravintolanvastaus" placeholder="Otsikko">
+                                  <button class="button small" type="submit">Vastaa</button>
+                                </form>
+                              </div>
+                        </div>
+
+                        <% } %>
+
+                          <!-- Lisää uusi kommentti ravintolalle -->
+
+                          <h4>Lisää kommentti</h4>
+                          <form action="/ravintolat/<%= ravintolat._id%>/kommentit" method="POST">
+                            <input type="text" name="otsikko" placeholder="Otsikko">
+                            <input type="text" name="arvosana" placeholder="Arvosana 1-5">
+                            <input type="text" name="arvio" placeholder="Kirjoita lyhyt arvio käynnistäsi">
+                            <input type="text" name="lahettaja" placeholder="Nimimerkki">
+                            <button class="button large" type="submit">Lisää</button>
+                          </form>
+
+                          <button class="close-button" data-close aria-label="Close modal" type="button">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+            </div>
+
+
+
+
+            <!-- Lisää uusi ravintola Modal -->
+
+            <div class="reveal" id="exampleModal1" data-reveal>
+              <h1>Lisää ravintola</h1>
+              <p class="lead">Muista täyttää kaikki tiedot.</p>
+              <form action="/ravintolat" method="POST">
+                <input type="text" name="nimi" placeholder="Ravintolan Nimi">
+                <input type="text" name="osoite" placeholder="Ravintolan Osoite">
+                <input type="text" name="kaupunki" placeholder="Kaupunki">
+                <input type="text" name="puh" placeholder="Puhelinnumero">
+                <button class="button large" type="submit">Lisää</button>
+              </form>
+              <button class="close-button" data-close aria-label="Close modal" type="button">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+
+            <% }) %>
+
+        </tbody>
+      </table>
+
+
+    </div>
+
+    <script src="../javascripts/vendor/jquery.js"></script>
+    <script src="../javascripts/vendor/what-input.js"></script>
+    <script src="../javascripts/vendor/foundation.js"></script>
+    <script src="../javascripts/app.js"></script>
+
+</body>
+
+</html>
