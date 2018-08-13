@@ -42,13 +42,9 @@ var RestaurantSchema = new Schema({
             required: [true, 'Lähettäjä on pakollinen!']
         },
         ravintolanvastaus: {
-            type: String
-        },
-        vastaus: [{
-            vastaus: {
             type: String,
-            }
-        }]
+            default: ""
+        }
     }]
 
 }, {collection: 'ravintolat'});

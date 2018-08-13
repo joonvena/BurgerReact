@@ -234,7 +234,7 @@
                                         <button class="button small">Muokkaa</button>
                                          </form>
                                 <p><%= ravintolat.kommentit[i].ravintolanvastaus %></p>
-                                <form action="/ravintolat/<%= ravintolat._id%>/kommentit/<%= ravintolat.kommentit[i]._id %>/reply" method="POST">
+                                <form action="/ravintolat/<%= ravintolat._id%>/kommentit/<%= ravintolat.kommentit[i]._id %>/vastaus" method="POST">
                                   <input type="text" name="id" placeholder="Otsikko" value="<%= ravintolat.kommentit[i]._id%>">
                                   <input type="hidden" name="otsikko" placeholder="Otsikko" value="<%= ravintolat.kommentit[i].otsikko%>">
                                   <input type="hidden" name="arvosana" placeholder="Arvosana 1-5" value="<%= ravintolat.kommentit[i].arvosana%>">

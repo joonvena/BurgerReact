@@ -62,11 +62,12 @@ router.post('/:id/kommentit', function(req, res, next) {
   });
 });
 
-router.post('/:id/kommentit/:id/vastaus', function(req, res, next) {
-  Restaurant.findByIdAndUpdate({_id: req.params.id }, {$push: {"kommentit.$.vastaus": req.body}}, function(err, comment) {
+router.post('/:id/kommentit/:id', function(req, res, next) {
+  Restaurant.findByIdAndUpdate({_id: req.params.id }, {$push: {"kommentit": req.body}}, function(err, comment) {
   res.redirect('/ravintolat/');
   });
 });
+
 
 /* GET get all comments by restaurantd id */
 router.get('/:id/kommentit', function(req, res, next){
@@ -95,10 +96,9 @@ router.post('/:id', function(req, res, next) {
   }).catch(next);
 });
 
-router.post('/:id/kommentit/:idcomments/reply', function(req, res, next){
-  Restaurant.findOneAndUpdate({_id: req.params.id}, { '$set': {'kommentit': req.body }}, function(err, comment){
-    console.log(req.params.id);
-    console.log(req.body);
+router.post('/:id/kommentit/:idcomments/vastaus', function(req, res, next){
+  Restaurant.findByIdAndUpdate({_id: req.params.id}, { '$push': {'kommentit.0.ravintolanvastaus': req.body.ravintolanvastaus }},  function(err, comment){
+    console.log(req.body.ravintolanvastaus);
     res.redirect('/ravintolat');
   });
 });
