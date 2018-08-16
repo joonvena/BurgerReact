@@ -1,0 +1,18 @@
+.restaurantlist {
+    background-color: #FFF;
+    opacity: 0.9;
+}
+
+table {
+    border-radius: 5px;
+}
+
+.list {
+    margin-top: 0px;
+    padding-top: 0px;
+}
+
+.col_restaurants {
+    height: 100%;
+    min-height: 100%;
+}

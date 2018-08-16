@@ -6,7 +6,7 @@ var auth = require("../controllers/AuthController.js");
 /* GET restaurant listing. */
 router.get('/', function(req, res, next) {
   Restaurant.find({}, function(err, restaurants) {
-    res.render('index', {ravintola: restaurants});
+    res.json(restaurants);
   });
 });
 
@@ -19,36 +19,36 @@ router.get('/:id', function(req, res, next) {
 
 router.get('/:id/edit', function(req, res, next) {
   Restaurant.findById({_id: req.params.id}, function(err, restaurant) {
-    res.render('update', {ravintolat: restaurant})
+    res.json(restaurant);
   });
 });
 
 /* POST add new restaurant */
 router.post('/', function(req, res, next) {
   Restaurant.create(req.body).then(function(err, restaurant) {
-    res.redirect('/ravintolat');
+    res.redirect('/');
   }).catch(next);
 });
 
 router.post('/etsi', function(req, res) {
   Restaurant.find({ $or: [{nimi: {$regex : "^" + req.body.haku}}, {kaupunki: {$regex : "^" + req.body.haku}}, {osoite: {$regex : "^" + req.body.haku}}]}, function(err, restaurants) {
       console.log(req.body.haku);
-      res.render("index", {ravintola: restaurants});
+      res.json(restaurants);
 });
 });
 
 /* PUT update restaurant by id */
 router.post('/:id', function(req, res, next) {
   Restaurant.findByIdAndUpdate({_id: req.params.id}, req.body, function(err, restaurant) {
-    res.redirect('/ravintolat');
+    res.send('Restaurant updated');
   }).catch(next);
 });
 
 
 /* DELETE remove restaurant by id */
-router.post('/:id/poista', function(req, res, next) {
+router.delete('/:id', function(req, res, next) {
   Restaurant.deleteOne({_id: req.params.id}, function(err, restaurant) {
-    res.redirect('/ravintolat')
+    res.send('Restaurant deleted');
   }).catch(next);
 });
 
@@ -58,7 +58,7 @@ router.post('/:id/poista', function(req, res, next) {
 /* PUT add comment to restaurant */
 router.post('/:id/kommentit', function(req, res, next) {
   Restaurant.findByIdAndUpdate({_id: req.params.id }, {$push: {"kommentit": req.body}}, function(err, comment) {
-  res.redirect('/ravintolat/');
+  res.send('Comment added')
   });
 });
 
@@ -86,7 +86,7 @@ router.get('/:id/kommentit/:idcomments', function(req, res, next){
 /* DELETE delete comments by id */
 router.post('/:id/kommentit/:idcomments', function(req, res, next){
   Restaurant.findByIdAndUpdate({_id: req.params.id}, {$pull: {"kommentit": {_id:  req.params.idcomments}}}, function(err, comment){
-    res.redirect('/ravintolat');
+    res.json(comment);
   });
 });
 
@@ -102,6 +102,7 @@ router.post('/:id/kommentit/:idcomments/vastaus', function(req, res, next){
     res.redirect('/ravintolat');
   });
 });
+
 
 /* PUT edit comment by id */
 /* router.put('/:id/kommentit/:idcomments', function(req, res, next){
